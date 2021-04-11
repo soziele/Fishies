@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_file"
+    app:startDestination="@id/game">
+
+    <fragment
+        android:id="@+id/game"
+        android:name="com.example.fishies.view.game"
+        android:label="fragment_game"
+        tools:layout="@layout/fragment_game">
+        <action
+            android:id="@+id/action_game_to_mapFragment"
+            app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_game_to_shop"
+            app:destination="@id/shop" />
+        <action
+            android:id="@+id/action_game_to_quests"
+            app:destination="@id/upgrades2" />
+    </fragment>
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.fishies.view.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map">
+        <action
+            android:id="@+id/action_mapFragment_to_game"
+            app:destination="@id/game" />
+    </fragment>
+    <fragment
+        android:id="@+id/shop"
+        android:name="com.example.fishies.view.shop"
+        android:label="fragment_shop"
+        tools:layout="@layout/fragment_shop">
+        <action
+            android:id="@+id/action_shop_to_game"
+            app:destination="@id/game" />
+    </fragment>
+    <fragment
+        android:id="@+id/upgrades2"
+        android:name="com.example.fishies.view.upgrades"
+        android:label="fragment_quests"
+        tools:layout="@layout/fragment_quests" >
+        <action
+            android:id="@+id/action_quests_to_game"
+            app:destination="@id/game" />
+    </fragment>
+</navigation>
