@@ -6,8 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.fishies.R
+import com.example.fishies.viewModel.ShopListAdapter
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,6 +29,11 @@ class shop : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private lateinit var myadapter: ShopListAdapter
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var myLayoutManager: LinearLayoutManager
+    var list = MutableLiveData<List<String>>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -36,15 +46,37 @@ class shop : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+        list.value = listOf("Small box", "Medium box", "Big box", "Large box")
+        myadapter = ShopListAdapter(list)
+        myLayoutManager = LinearLayoutManager(context)
+
+        list.observe(viewLifecycleOwner, Observer{
+            myadapter.notifyDataSetChanged()
+        })
         return inflater.inflate(R.layout.fragment_shop, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        recyclerView = view.findViewById<RecyclerView>(R.id.shop_items_list).apply {
+            this.layoutManager = myLayoutManager
+            this.adapter = myadapter
+        }
+
         val exitShopButton = view.findViewById<ImageButton>(R.id.exit_shop_button)
+        val tackleBoxesButton = view.findViewById<ImageButton>(R.id.tackle_boxes_button)
+        val rodsButton = view.findViewById<ImageButton>(R.id.rods_button)
+        val baitsButton = view.findViewById<ImageButton>(R.id.baits_button)
+        val netsButton = view.findViewById<ImageButton>(R.id.nets_button)
+        val anglersButton = view.findViewById<ImageButton>(R.id.anglers_button)
+
         exitShopButton.setOnClickListener { view.findNavController().navigate(R.id.action_shop_to_game) }
+        tackleBoxesButton.setOnClickListener { list.value = listOf("Small box", "Medium box", "Big box", "Large box")}
+        rodsButton.setOnClickListener { list.value = listOf("Broken rod", "Kid's rod", "Plastic rod", "Metal rod", "Pro rod") }
+        baitsButton.setOnClickListener { list.value = listOf("Roach", "Frozen worm", "Alive worm", "Steak") }
+        netsButton.setOnClickListener { list.value = listOf("Small net", "Medium net", "Big net", "Large net") }
+        anglersButton.setOnClickListener { list.value = listOf("Angler 1", "Angler 2", "Angler 3", "Angler 4") }
     }
 
     companion object {
