@@ -6,8 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.fishies.R
+import com.example.fishies.viewmodel.StateViewModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -23,6 +26,7 @@ class game : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var stateViewModel: StateViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +38,8 @@ class game : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        stateViewModel = ViewModelProvider(this).get(StateViewModel::class.java)
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_game, container, false)
     }
@@ -47,6 +53,11 @@ class game : Fragment() {
         shopButton.setOnClickListener { view.findNavController().navigate(R.id.action_game_to_shop) }
         questsButton.setOnClickListener { view.findNavController().navigate(R.id.action_game_to_quests) }
         mapButton.setOnClickListener { view.findNavController().navigate(R.id.action_game_to_mapFragment) }
+
+        val gameScreen = view.findViewById<ImageView>(R.id.game_screen)
+        gameScreen.setOnClickListener {
+            stateViewModel.click()
+        }
     }
 
     companion object {
