@@ -5,7 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.fishies.R
+import com.example.fishies.viewmodel.StateViewModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,6 +26,7 @@ class HeaderFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var stateViewModel: StateViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,8 +40,34 @@ class HeaderFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        stateViewModel = ViewModelProvider(this).get(StateViewModel::class.java)
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_header, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // initialize in game displayed values
+        val moneyHeader = view.findViewById<TextView>(R.id.money_header)
+        val fishHeader = view.findViewById<TextView>(R.id.fishes_header)
+
+        // attach observers to both value to update them
+        stateViewModel.getState().fishCount.observe(viewLifecycleOwner, Observer { t ->
+            fishHeader.text = "$t"
+        })
+
+        stateViewModel.getState().moneyCount.observe(viewLifecycleOwner, Observer { t ->
+            moneyHeader.text = "$t"
+        })
+
+        val sellButton = view.findViewById<Button>(R.id.sell_button)
+        sellButton.setOnClickListener {
+            stateViewModel.sellFishes()
+            moneyHeader.text = "${stateViewModel.getState().moneyCount.value}"
+            fishHeader.text = "${stateViewModel.getState().fishCount.value}"
+        }
     }
 
     companion object {
