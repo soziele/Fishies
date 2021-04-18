@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fish_card_layout"
+    android:layout_width="160dp"
+    android:layout_height="230dp"
+    android:layout_margin="10dp"
+    android:background="#E3F1F6"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/card_fish_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="Fish name"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/card_fish_latino_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Latino fish name"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        android:textStyle="italic" />
+
+    <ImageView
+        android:id="@+id/card_fish_photo"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_gravity="center_horizontal"
+        app:srcCompat="@drawable/fish" />
+
+    <TextView
+        android:id="@+id/card_fish_parameters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Max length, max weight"
+        android:textAlignment="center"
+        android:textColor="#202020" />
+
+    <TextView
+        android:id="@+id/card_fish_description"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:text="Description"
+        android:textAlignment="center"
+        android:textColor="#202020" />
+</LinearLayout>

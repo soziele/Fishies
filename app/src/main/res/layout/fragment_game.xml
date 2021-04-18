@@ -7,20 +7,54 @@
     android:orientation="vertical"
     tools:context=".view.game">
 
-    <ImageView
-        android:id="@+id/game_screen"
+    <FrameLayout
+        android:id="@+id/game_frame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:adjustViewBounds="false"
-        android:cropToPadding="false"
-        android:scaleType="centerCrop"
-        android:src="@drawable/background1" />
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/game_screen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="false"
+            android:cropToPadding="false"
+            android:scaleType="centerCrop"
+            android:src="@drawable/background1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:orientation="horizontal">
+
+            <include
+                android:id="@+id/task_card1"
+                layout="@layout/task_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <include
+                android:id="@+id/task_card2"
+                layout="@layout/task_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <include
+                android:id="@+id/task_card3"
+                layout="@layout/task_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@+id/game_screen">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <Button
             android:id="@+id/shop_button"
@@ -34,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:text="QUESTS" />
+            android:text="COLLECTION" />
 
         <Button
             android:id="@+id/map_button"

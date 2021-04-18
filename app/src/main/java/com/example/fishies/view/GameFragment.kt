@@ -1,11 +1,15 @@
 package com.example.fishies.view
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -44,6 +48,7 @@ class game : Fragment() {
         return inflater.inflate(R.layout.fragment_game, container, false)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -55,9 +60,31 @@ class game : Fragment() {
         mapButton.setOnClickListener { view.findNavController().navigate(R.id.action_game_to_mapFragment) }
 
         val gameScreen = view.findViewById<ImageView>(R.id.game_screen)
-        gameScreen.setOnClickListener {
-            stateViewModel.click()
-        }
+        val gameFrame = view.findViewById<FrameLayout>(R.id.game_frame)
+
+        gameScreen.setOnTouchListener(object : View.OnTouchListener {
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                when (event?.action) {
+                    MotionEvent.ACTION_DOWN ->{
+
+                        stateViewModel.click()
+
+                        var newFish: ImageView
+                        newFish = ImageView(context)
+                        newFish.setImageResource(R.drawable.fish)
+                        gameFrame.addView(newFish)
+                        newFish.x = event.x
+                        newFish.y = event.y
+                        newFish.layoutParams.height = 100
+                        newFish.layoutParams.width = 100
+                        newFish.startAnimation(AnimationUtils.loadAnimation(context, R.anim.pop_out))
+                        newFish.visibility = View.INVISIBLE
+                    }
+                }
+
+                return v?.onTouchEvent(event) ?: true
+            }
+        })
     }
 
     companion object {

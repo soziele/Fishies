@@ -79,7 +79,7 @@
             android:backgroundTint="#00E676"
             android:backgroundTintMode="add"
             android:paddingTop="20dp"
-            android:text="5 lvl"
+            android:text="1 lvl"
             android:textAlignment="center"
             android:textSize="24sp" />
 

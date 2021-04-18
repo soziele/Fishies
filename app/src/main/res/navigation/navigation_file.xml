@@ -22,7 +22,7 @@
             app:popUpToInclusive="false" />
         <action
             android:id="@+id/action_game_to_quests"
-            app:destination="@id/upgrades2" />
+            app:destination="@id/album" />
     </fragment>
     <fragment
         android:id="@+id/mapFragment"
@@ -47,10 +47,10 @@
             app:popUpToInclusive="false" />
     </fragment>
     <fragment
-        android:id="@+id/upgrades2"
-        android:name="com.example.fishies.view.upgrades"
-        android:label="fragment_quests"
-        tools:layout="@layout/fragment_quests" >
+        android:id="@+id/album"
+        android:name="com.example.fishies.view.AlbumFragment"
+        android:label="fragment_album"
+        tools:layout="@layout/fragment_album">
         <action
             android:id="@+id/action_quests_to_game"
             app:destination="@id/game" />
