@@ -64,8 +64,8 @@ class HeaderFragment : Fragment() {
         })
 
         val sellButton = view.findViewById<Button>(R.id.sell_button)
-        sellButton.setText(Html.fromHtml("<b><medium>" + "SELL" + "</medium></b>" +  "<br />" +
-                "<small><small>" + "1$ per fish" + "</small></small>"))
+        sellButton.text = Html.fromHtml("<b><medium>" + "SELL" + "</medium></b>" +  "<br />" +
+                "<small><small>" + "1$ per fish" + "</small></small>")
 
         sellButton.setOnClickListener {
             stateViewModel.sellFishes()

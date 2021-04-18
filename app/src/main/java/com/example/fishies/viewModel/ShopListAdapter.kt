@@ -26,8 +26,8 @@ class ShopListAdapter (var items: LiveData<List<String>>): RecyclerView.Adapter<
         val buyButton = holder.itemView.findViewById<Button>(R.id.buy_button)
 
         itemName.text = items.value!![position]
-        buyButton.setText(Html.fromHtml("<b><medium>" + "BUY" + "</medium></b>" +  "<br />" +
-                "<small><small>" + "For 100$" + "</small></small>"))
+        buyButton.text = Html.fromHtml("<b><medium>" + "BUY" + "</medium></b>" +  "<br />" +
+                "<small><small>" + "For 100$" + "</small></small>")
     }
 
     override fun getItemCount(): Int {
