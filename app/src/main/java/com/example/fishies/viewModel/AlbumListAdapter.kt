@@ -1,20 +1,19 @@
 package com.example.fishies.viewModel
 
 import android.graphics.Color
-import android.text.Html
+import android.transition.Visibility
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.view.marginTop
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fishies.R
+import com.example.fishies.model.FishData
 
-class AlbumListAdapter (var items: LiveData<List<String>>): RecyclerView.Adapter<AlbumListAdapter.ItemsHolder>(){
+class AlbumListAdapter(var items: MutableList<FishData>?): RecyclerView.Adapter<AlbumListAdapter.ItemsHolder>(){
 
     inner class ItemsHolder(view: View): RecyclerView.ViewHolder(view)
 
@@ -33,9 +32,20 @@ class AlbumListAdapter (var items: LiveData<List<String>>): RecyclerView.Adapter
         var fishDescription = holder.itemView.findViewById<TextView>(R.id.card_fish_description)
         var fishCardLayout = holder.itemView.findViewById<LinearLayout>(R.id.fish_card_layout)
 
-        fishName.text = items.value!![position]
+        fishCardLayout.alpha = 0f
+        fishCardLayout.visibility = VISIBLE
+        fishCardLayout.animate()
+                .alpha(1f)
+                .setDuration(1000)
 
-        if(items.value!![position] == "Not Unlocked Yet"){
+        fishName.text = items!![position].name
+        fishLatinoName.text = items!![position].scientific
+        fishParameters.text = "Average length:"+items!![position].avLength.toString()
+        fishDescription.text = items!![position].biology
+        fishPhoto.setImageResource(R.drawable.fish)
+        holder.itemView.setBackgroundColor(Color.parseColor("#E3F1F6"))
+
+        if(!items!![position].unlocked!!){
             holder.itemView.setBackgroundColor(Color.LTGRAY)
             fishPhoto.setImageResource(R.drawable.locked)
             fishLatinoName.text = ""
@@ -47,6 +57,6 @@ class AlbumListAdapter (var items: LiveData<List<String>>): RecyclerView.Adapter
     }
 
     override fun getItemCount(): Int {
-        return items.value?.size?:0
+        return items?.size?:0
     }
 }

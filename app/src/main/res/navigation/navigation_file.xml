@@ -22,7 +22,9 @@
             app:popUpToInclusive="false" />
         <action
             android:id="@+id/action_game_to_quests"
-            app:destination="@id/album" />
+            app:destination="@id/album"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/slow_fade_out" />
     </fragment>
     <fragment
         android:id="@+id/mapFragment"
@@ -53,6 +55,8 @@
         tools:layout="@layout/fragment_album">
         <action
             android:id="@+id/action_quests_to_game"
-            app:destination="@id/game" />
+            app:destination="@id/game"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@anim/slide_down" />
     </fragment>
 </navigation>

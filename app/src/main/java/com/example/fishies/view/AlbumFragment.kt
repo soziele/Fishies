@@ -15,10 +15,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fishies.R
+import com.example.fishies.model.FishData
 import com.example.fishies.repository.FishRepository
 import com.example.fishies.viewModel.AlbumListAdapter
-import com.example.fishies.viewModel.FishDataViewModel
 import com.example.fishies.viewModel.FishDataViewModelFactory
+import com.example.fishies.viewModel.FishDataViewModel
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -57,29 +58,30 @@ class AlbumFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        //TODO: Apply Fishies to Album
+
         val repository = FishRepository()
         val viewModelFactory = FishDataViewModelFactory(repository)
         fishDataVM = ViewModelProvider(this, viewModelFactory).get(FishDataViewModel::class.java)
 
-        fishDataVM.getFishById(22)
-        fishDataVM.responseFishData.observe(viewLifecycleOwner, Observer { response ->
-            if (response.isSuccessful){
-                Log.d("Response", "${response.body()?.name.toString()} \n ${response.body()?.biology.toString()}")
-            } else {
-                Log.e("Response", response.errorBody().toString())
-            }
-        })
-
-
-        list.value = listOf("Sardine", "Roach", "Trout", "Not Unlocked Yet")
-        myadapter = AlbumListAdapter(list)
         myLayoutManager = GridLayoutManager(context, 2)
+        setAdapter(mutableListOf())
 
-        list.observe(viewLifecycleOwner, Observer{
+
+        fishDataVM.getAllTheFish()
+
+        myadapter = AlbumListAdapter(fishDataVM.fishList.value)
+
+        fishDataVM.fishList.observe(viewLifecycleOwner, Observer{list->
             myadapter.notifyDataSetChanged()
+            recyclerView.adapter = AlbumListAdapter(list)
         })
+
+
         return inflater.inflate(R.layout.fragment_album, container, false)
+    }
+
+    fun setAdapter(fishList: MutableList<FishData>){
+        myadapter = AlbumListAdapter(fishList)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

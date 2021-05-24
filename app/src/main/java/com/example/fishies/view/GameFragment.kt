@@ -19,7 +19,7 @@ import com.example.fishies.R
 import com.example.fishies.repository.FishRepository
 import com.example.fishies.viewModel.FishDataViewModel
 import com.example.fishies.viewModel.FishDataViewModelFactory
-import com.example.fishies.viewmodel.StateViewModel
+import com.example.fishies.viewModel.StateViewModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -36,6 +36,7 @@ class Game : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var stateViewModel: StateViewModel
+    private lateinit var fishDataVM: FishDataViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +49,10 @@ class Game : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         stateViewModel = ViewModelProvider(this).get(StateViewModel::class.java)
+
+        val repository = FishRepository()
+        val viewModelFactory = FishDataViewModelFactory(repository)
+        fishDataVM = ViewModelProvider(this, viewModelFactory).get(FishDataViewModel::class.java)
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_game, container, false)
