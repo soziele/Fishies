@@ -7,6 +7,6 @@ import retrofit2.Response
 class FishRepository {
 
     suspend fun getFish(name: String): Response<FishData> {
-        return RetrofitFishInstance.api.getFish(name)
+        return RetrofitFishInstance.fishApi.getFish(name)
     }
 }

@@ -40,7 +40,7 @@ class AlbumListAdapter(var items: MutableList<FishData>?): RecyclerView.Adapter<
 
         fishName.text = items!![position].name
         fishLatinoName.text = items!![position].scientific
-        fishParameters.text = "Average length:"+items!![position].avLength.toString()
+        fishParameters.text = "Average length: "+items!![position].avLength.toString()
         fishDescription.text = items!![position].biology
         fishPhoto.setImageResource(R.drawable.fish)
         holder.itemView.setBackgroundColor(Color.parseColor("#E3F1F6"))

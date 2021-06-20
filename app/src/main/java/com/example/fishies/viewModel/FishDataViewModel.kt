@@ -25,15 +25,14 @@ class FishDataViewModel(private val repository: FishRepository) : ViewModel() {
     }
 
     fun getAllTheFish() {
+        
         viewModelScope.launch {
 
             var tmpList: MutableList<FishData> = mutableListOf()
             for(i in 1..25) {
 
                 val url = "fish/${i}"
-                val unlocked: Boolean
-                if(i>5) unlocked = false
-                else unlocked = true
+                val unlocked: Boolean = i <= 5
 
                 val response = repository.getFish(url)
                 responseFishData.value = response

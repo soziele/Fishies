@@ -87,6 +87,7 @@ class AlbumFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         recyclerView = view.findViewById<RecyclerView>(R.id.fish_collection_list).apply {
             this.layoutManager = myLayoutManager
             this.adapter = myadapter
