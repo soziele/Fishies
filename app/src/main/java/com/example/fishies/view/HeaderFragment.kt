@@ -11,7 +11,13 @@ import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.fishies.R
+import com.example.fishies.repository.FishRepository
+import com.example.fishies.repository.UserRepository
+import com.example.fishies.viewModel.FishDataViewModel
+import com.example.fishies.viewModel.FishDataViewModelFactory
 import com.example.fishies.viewModel.StateViewModel
+import com.example.fishies.viewModel.StateViewModelFactory
+import okhttp3.internal.notifyAll
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -41,7 +47,9 @@ class HeaderFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        stateViewModel = ViewModelProvider(this).get(StateViewModel::class.java)
+        val repository = UserRepository()
+        val viewModelFactory = StateViewModelFactory(repository)
+        stateViewModel = ViewModelProvider(this, viewModelFactory).get(StateViewModel::class.java)
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_header, container, false)
@@ -55,23 +63,25 @@ class HeaderFragment : Fragment() {
         val fishHeader = view.findViewById<TextView>(R.id.fishes_header)
 
         // attach observers to both value to update them
-        stateViewModel.getState().fishCount.observe(viewLifecycleOwner, Observer { t ->
-            fishHeader.text = "$t"
+
+        stateViewModel.User.observe(viewLifecycleOwner, Observer { t ->
+            moneyHeader.text = t.money.toString()
+            fishHeader.text = t.fishes.toString()
+
+            val sellButton = view.findViewById<Button>(R.id.sell_button)
+            sellButton.text = Html.fromHtml("<b><medium>" + "SELL" + "</medium></b>" +  "<br />" +
+                    "<small><small>" + "1$ per fish" + "</small></small>")
+
+            sellButton.setOnClickListener {
+                stateViewModel.sellFishes()
+                fishHeader.text = t.fishes.toString()
+                moneyHeader.text = t.money.toString()
+            }
         })
 
-        stateViewModel.getState().moneyCount.observe(viewLifecycleOwner, Observer { t ->
-            moneyHeader.text = "$t"
-        })
 
-        val sellButton = view.findViewById<Button>(R.id.sell_button)
-        sellButton.text = Html.fromHtml("<b><medium>" + "SELL" + "</medium></b>" +  "<br />" +
-                "<small><small>" + "1$ per fish" + "</small></small>")
 
-        sellButton.setOnClickListener {
-            stateViewModel.sellFishes()
-            moneyHeader.text = "${stateViewModel.getState().moneyCount.value}"
-            fishHeader.text = "${stateViewModel.getState().fishCount.value}"
-        }
+
     }
 
     companion object {

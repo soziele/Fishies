@@ -17,9 +17,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.fishies.R
 import com.example.fishies.repository.FishRepository
+import com.example.fishies.repository.UserRepository
 import com.example.fishies.viewModel.FishDataViewModel
 import com.example.fishies.viewModel.FishDataViewModelFactory
 import com.example.fishies.viewModel.StateViewModel
+import com.example.fishies.viewModel.StateViewModelFactory
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -48,7 +50,9 @@ class Game : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        stateViewModel = ViewModelProvider(this).get(StateViewModel::class.java)
+        val userRepository = UserRepository()
+        val stateViewModelFactory = StateViewModelFactory(userRepository)
+        stateViewModel = ViewModelProvider(this, stateViewModelFactory).get(StateViewModel::class.java)
 
         val repository = FishRepository()
         val viewModelFactory = FishDataViewModelFactory(repository)
