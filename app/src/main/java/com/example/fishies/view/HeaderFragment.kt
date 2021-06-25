@@ -11,6 +11,8 @@ import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.fishies.R
+import com.example.fishies.model.LocationsList
+import com.example.fishies.model.UpgradesList
 import com.example.fishies.repository.FishRepository
 import com.example.fishies.repository.UserRepository
 import com.example.fishies.viewModel.FishDataViewModel
@@ -49,7 +51,7 @@ class HeaderFragment : Fragment() {
     ): View? {
         val repository = UserRepository()
         val viewModelFactory = StateViewModelFactory(repository)
-        stateViewModel = ViewModelProvider(this, viewModelFactory).get(StateViewModel::class.java)
+        stateViewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(StateViewModel::class.java)
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_header, container, false)
@@ -61,26 +63,31 @@ class HeaderFragment : Fragment() {
         // initialize in game displayed values
         val moneyHeader = view.findViewById<TextView>(R.id.money_header)
         val fishHeader = view.findViewById<TextView>(R.id.fishes_header)
+        val levelHeader = view.findViewById<TextView>(R.id.level_header)
 
         // attach observers to both value to update them
 
-        stateViewModel.User.observe(viewLifecycleOwner, Observer { t ->
-            moneyHeader.text = t.money.toString()
-            fishHeader.text = t.fishes.toString()
+        stateViewModel.User.observe(viewLifecycleOwner, Observer { user ->
+            moneyHeader.text = user.money.toString()+"$"
+            levelHeader.text = LocationsList.locations.get(user.location).name
 
             val sellButton = view.findViewById<Button>(R.id.sell_button)
-            sellButton.text = Html.fromHtml("<b><medium>" + "SELL" + "</medium></b>" +  "<br />" +
-                    "<small><small>" + "1$ per fish" + "</small></small>")
+            stateViewModel.fishPrice.observe(viewLifecycleOwner, Observer { value->
+                sellButton.text = Html.fromHtml("<b><medium>" + "SELL" + "</medium></b>" +  "<br />" +
+                        "<small><small>" + "${value}$ per fish" + "</small></small>")
+            })
+
 
             sellButton.setOnClickListener {
                 stateViewModel.sellFishes()
-                fishHeader.text = t.fishes.toString()
-                moneyHeader.text = t.money.toString()
+                fishHeader.text = user.fishes.toString()+"/"+UpgradesList.tackleBoxes.get(user.tackleBox).value
+                moneyHeader.text = user.money.toString()+"$"
             }
+
+        stateViewModel.fishesNumber.observe(viewLifecycleOwner, Observer { number->
+            fishHeader.text = number.toString()+"/"+UpgradesList.tackleBoxes.get(user.tackleBox).value
         })
-
-
-
+        })
 
     }
 

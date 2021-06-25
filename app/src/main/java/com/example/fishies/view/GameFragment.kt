@@ -12,10 +12,13 @@ import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.fishies.R
+import com.example.fishies.model.LocationsList
+import com.example.fishies.model.UpgradesList
 import com.example.fishies.repository.FishRepository
 import com.example.fishies.repository.UserRepository
 import com.example.fishies.viewModel.FishDataViewModel
@@ -46,17 +49,18 @@ class Game : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val userRepository = UserRepository()
         val stateViewModelFactory = StateViewModelFactory(userRepository)
-        stateViewModel = ViewModelProvider(this, stateViewModelFactory).get(StateViewModel::class.java)
+        stateViewModel = ViewModelProvider(requireActivity(), stateViewModelFactory).get(StateViewModel::class.java)
 
         val repository = FishRepository()
         val viewModelFactory = FishDataViewModelFactory(repository)
-        fishDataVM = ViewModelProvider(this, viewModelFactory).get(FishDataViewModel::class.java)
+        fishDataVM = ViewModelProvider(requireActivity(), viewModelFactory).get(FishDataViewModel::class.java)
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_game, container, false)
@@ -76,28 +80,38 @@ class Game : Fragment() {
         val gameScreen = view.findViewById<ImageView>(R.id.game_screen)
         val gameFrame = view.findViewById<FrameLayout>(R.id.game_frame)
 
+        stateViewModel.fishesNumber.observe(viewLifecycleOwner, Observer { number->
+            stateViewModel.User.observe(viewLifecycleOwner, Observer {user->
+
+                gameScreen.setImageResource(LocationsList.locations.last {location -> location.bought }.background)
+
         gameScreen.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 when (event?.action) {
-                    MotionEvent.ACTION_DOWN ->{
+                    MotionEvent.ACTION_DOWN -> {
+                        if (number >= UpgradesList.tackleBoxes.get(user.tackleBox).value) {
+                            Toast.makeText(context, "Your tackle box won't contain that many fish!", Toast.LENGTH_SHORT).show()
+                        } else {
+                            stateViewModel.click()
 
-                        stateViewModel.click()
-
-                        var newFish: ImageView
-                        newFish = ImageView(context)
-                        newFish.setImageResource(R.drawable.fish)
-                        gameFrame.addView(newFish)
-                        newFish.x = event.x
-                        newFish.y = event.y
-                        newFish.layoutParams.height = 100
-                        newFish.layoutParams.width = 100
-                        newFish.startAnimation(AnimationUtils.loadAnimation(context, R.anim.pop_out))
-                        newFish.visibility = View.INVISIBLE
+                            var newFish: ImageView
+                            newFish = ImageView(context)
+                            newFish.setImageResource(R.drawable.fish)
+                            gameFrame.addView(newFish)
+                            newFish.x = event.x
+                            newFish.y = event.y
+                            newFish.layoutParams.height = 100
+                            newFish.layoutParams.width = 100
+                            newFish.startAnimation(AnimationUtils.loadAnimation(context, R.anim.pop_out))
+                            newFish.visibility = View.INVISIBLE
+                        }
                     }
                 }
 
                 return v?.onTouchEvent(event) ?: true
             }
+                })
+            })
         })
     }
 

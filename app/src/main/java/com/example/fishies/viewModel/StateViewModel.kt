@@ -1,16 +1,26 @@
 package com.example.fishies.viewModel
 
+import android.app.Application
+import android.content.Context
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.*
+import com.example.fishies.model.LocationsList
+import com.example.fishies.model.Upgrade
+import com.example.fishies.model.UpgradesList
 import com.example.fishies.model.User
 import com.example.fishies.repository.UserRepository
 import kotlinx.coroutines.launch
+import okhttp3.internal.notify
+import okhttp3.internal.notifyAll
 
 
 class StateViewModel(val repository: UserRepository): ViewModel() {
     private val filename = "state.json"
     lateinit var User: MutableLiveData<User>
+    var fishesNumber: MutableLiveData<Int> = MutableLiveData(0)
+    var fishPrice: MutableLiveData<Int> = MutableLiveData(1)
 
     init {
        getUserState()
@@ -40,6 +50,8 @@ class StateViewModel(val repository: UserRepository): ViewModel() {
                     location = response.body()!!.location,
                     unlockedAnglers = response.body()!!.unlockedAnglers,
                     lastLoggedIn = response.body()!!.lastLoggedIn)
+                updateUpgradesList()
+                fishesNumber.value = User.value!!.fishes
             } else {
                 Log.e("Response", response.code().toString() )
             }
@@ -49,12 +61,64 @@ class StateViewModel(val repository: UserRepository): ViewModel() {
     fun click(){
         User.value!!.fishes = User.value!!.fishes.plus(1)//todo: add other upgrades
         Log.d("Clicked", User.value!!.fishes.toString())
-
+        fishesNumber.value = User.value!!.fishes
     }
 
     fun sellFishes() {
-        User.value!!.money = User.value!!.money.plus(User.value!!.fishes) //todo: add other upgrades
+        User.value!!.money = User.value!!.money.plus(User.value!!.fishes*fishPrice.value!!) //todo: add other upgrades
         User.value!!.fishes = 0
+        fishesNumber.value = User.value!!.fishes
         Log.d("Sold", User.value!!.fishes.toString())
+    }
+
+    fun updateUpgradesList() {
+        for (index in UpgradesList.tackleBoxes.indices){
+            if(index <= User.value!!.tackleBox) UpgradesList.tackleBoxes[index].bought = true
+        }
+        for (bait in UpgradesList.baits.indices){
+            if(User.value!!.equippedBaits.contains(bait)) UpgradesList.baits.get(bait).bought = true
+        }
+        for (index in UpgradesList.rods.indices){
+            if(index <= User.value!!.equippedFishingRod) UpgradesList.rods[index].bought = true
+        }
+        for (angler in UpgradesList.anglers.indices){
+            if(User.value!!.unlockedAnglers.contains(angler)) UpgradesList.anglers[angler].bought = true
+        }
+    }
+
+    fun buyItem(upgrade: Upgrade) {
+            when(upgrade.type){
+                "TackleBox" ->{
+                    if(User.value!!.tackleBox < UpgradesList.tackleBoxes.indexOf(upgrade)) User.value!!.tackleBox = UpgradesList.tackleBoxes.indexOf(upgrade)
+                    UpgradesList.tackleBoxes.first{ it.name == upgrade.name }.bought = true
+                    User.value!!.money = User.value!!.money.minus(upgrade.price)
+                    User.value = User.value
+                }
+                "Rod"->{
+                    if(User.value!!.equippedFishingRod < UpgradesList.rods.indexOf(upgrade)) User.value!!.equippedFishingRod = UpgradesList.rods.indexOf(upgrade)
+                    UpgradesList.rods.first{ it.name == upgrade.name }.bought = true
+                    Log.d("Bought item", upgrade.name+" "+UpgradesList.rods.first { it.name == upgrade.name }.bought.toString())
+                    User.value!!.money = User.value!!.money.minus(upgrade.price)
+                    fishPrice.value = UpgradesList.rods.get(User.value!!.equippedFishingRod).value
+                    User.value = User.value
+                }
+                "Bait"->{
+                    User.value!!.equippedBaits.toMutableList().add(UpgradesList.baits.indexOf(upgrade))
+                    UpgradesList.baits.first { it.name == upgrade.name }.bought = true
+                    Log.d("Bought item", upgrade.name+" "+UpgradesList.baits.first { it.name == upgrade.name }.bought.toString())
+                    User.value!!.money = User.value!!.money.minus(upgrade.price)
+                    User.value = User.value
+                }
+                "Angler"->{
+
+                }
+            }
+        updateUpgradesList()
+    }
+
+    fun buyLocation(locationIndex: Int) {
+        User.value!!.location = locationIndex
+        LocationsList.locations[locationIndex].bought = true
+        User.value = User.value
     }
 }

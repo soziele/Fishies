@@ -3,16 +3,16 @@ package com.example.fishies.model
 class UpgradesList {
     companion object{
         val tackleBoxes = listOf(
-            Upgrade("TackleBox", "Tiny Box", "", 100,-1,200,true),
-            Upgrade("TackleBox", "Small Box", "", 500,-1,800,false),
-            Upgrade("TackleBox", "Medium Box", "", 2500,-1,1500,false),
+            Upgrade("TackleBox", "Tiny Box", "", 100,-1,20,true),
+            Upgrade("TackleBox", "Small Box", "", 500,-1,80,false),
+            Upgrade("TackleBox", "Medium Box", "", 2500,-1,150,false),
             Upgrade("TackleBox", "Big Box", "", 5000,-1,10000,false),
             Upgrade("TackleBox", "Large Box", "", 10000,-1,50000,false)
         )
         val rods = listOf(
-            Upgrade("Rod","Toy Rod", "",1,-1,500,false),
-            Upgrade("Rod","Plastic Rod", "",2,-1,1500,false),
-            Upgrade("Rod","Bent Rod", "",3,-1,5000,false),
+            Upgrade("Rod","Toy Rod", "",1,-1,50,false),
+            Upgrade("Rod","Plastic Rod", "",2,-1,150,false),
+            Upgrade("Rod","Bent Rod", "",3,-1,500,false),
             Upgrade("Rod","Short Rod", "",4,-1,25000,false),
             Upgrade("Rod","Wooden Rod", "",5,-1,75000,false),
             Upgrade("Rod","Steel Rod", "",6,-1,150000,false),
@@ -22,7 +22,7 @@ class UpgradesList {
             Upgrade("Rod","Ultimate Rod", "",20,-1,15000000,false)
         )
         val baits = listOf(
-            Upgrade("Bait","Walleye Bait", "",0,0,5,false),
+            Upgrade("Bait","Walleye Bait", "",0,0,5,true),
             Upgrade("Bait","Northern Pike Bait", "",1,0,10,false),
             Upgrade("Bait","Bluegill Bait", "",2,0,25,false),
             Upgrade("Bait","Green Sunfish Bait", "",3,0,50,false),

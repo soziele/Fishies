@@ -15,9 +15,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.fishies.R
 import com.example.fishies.model.Upgrade
 import com.example.fishies.model.UpgradesList
+import com.example.fishies.repository.UserRepository
 import com.example.fishies.viewModel.FishDataViewModel
 import com.example.fishies.viewModel.ShopListAdapter
 import com.example.fishies.viewModel.StateViewModel
+import com.example.fishies.viewModel.StateViewModelFactory
+import okhttp3.internal.notify
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -52,12 +55,19 @@ class shop : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        stateViewModel = ViewModelProvider(this).get(StateViewModel::class.java)
+        val userRepository = UserRepository()
+        val stateViewModelFactory = StateViewModelFactory(userRepository)
+        stateViewModel = ViewModelProvider(requireActivity(), stateViewModelFactory).get(StateViewModel::class.java)
+
         list.value = UpgradesList.tackleBoxes
-        myadapter = ShopListAdapter(list)
+        myadapter = ShopListAdapter(list, stateViewModel, requireContext())
         myLayoutManager = LinearLayoutManager(context)
 
         list.observe(viewLifecycleOwner, Observer{
+            myadapter.notifyDataSetChanged()
+        })
+
+        stateViewModel.User.observe(viewLifecycleOwner, Observer{
             myadapter.notifyDataSetChanged()
         })
         return inflater.inflate(R.layout.fragment_shop, container, false)
