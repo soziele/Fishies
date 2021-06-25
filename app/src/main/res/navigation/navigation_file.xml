@@ -12,7 +12,9 @@
         tools:layout="@layout/fragment_game">
         <action
             android:id="@+id/action_game_to_mapFragment"
-            app:destination="@id/mapFragment" />
+            app:destination="@id/mapFragment"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/slow_fade_out" />
         <action
             android:id="@+id/action_game_to_shop"
             app:destination="@id/shop"
@@ -33,7 +35,9 @@
         tools:layout="@layout/fragment_map">
         <action
             android:id="@+id/action_mapFragment_to_game"
-            app:destination="@id/game" />
+            app:destination="@id/game"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@anim/slide_down" />
     </fragment>
     <fragment
         android:id="@+id/shop"

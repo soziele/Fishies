@@ -52,8 +52,6 @@ class AlbumListAdapter(var items: MutableList<FishData>?): RecyclerView.Adapter<
             fishParameters.text = ""
             fishDescription.text = ""
         }
-
-
     }
 
     override fun getItemCount(): Int {

@@ -61,13 +61,10 @@ class AlbumFragment : Fragment() {
 
         val repository = FishRepository()
         val viewModelFactory = FishDataViewModelFactory(repository)
-        fishDataVM = ViewModelProvider(this, viewModelFactory).get(FishDataViewModel::class.java)
+        fishDataVM = ViewModelProvider(requireActivity(), viewModelFactory).get(FishDataViewModel::class.java)
 
         myLayoutManager = GridLayoutManager(context, 2)
         setAdapter(mutableListOf())
-
-
-        fishDataVM.getAllTheFish()
 
         myadapter = AlbumListAdapter(fishDataVM.fishList.value)
 
@@ -94,7 +91,7 @@ class AlbumFragment : Fragment() {
         }
 
         var exitAlbumButton = view.findViewById<ImageButton>(R.id.exit_album_button)
-        exitAlbumButton.setOnClickListener{ view.findNavController().navigate(R.id.action_quests_to_game) }
+        exitAlbumButton.setOnClickListener{ view.findNavController().navigate(R.id.action_quests_to_game)}
 
     }
 
