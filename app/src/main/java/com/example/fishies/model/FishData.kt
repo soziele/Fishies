@@ -15,6 +15,6 @@ data class FishData(
     val minDepth: Double? = 0.0,
     val name: String? = "",
     val scientific: String? = "",
-    val unlocked: Boolean? = false,
+    var unlocked: Boolean? = false,
     var value: Int? = 1
 )

@@ -32,7 +32,7 @@ class FishDataViewModel(private val repository: FishRepository) : ViewModel() {
             for(i in 1..25) {
 
                 val url = "fish/${i}"
-                val unlocked: Boolean = i <= 5
+                val unlocked: Boolean = false
 
                 val response = repository.getFish(url)
                 responseFishData.value = response

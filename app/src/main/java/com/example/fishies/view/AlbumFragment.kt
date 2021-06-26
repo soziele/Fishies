@@ -17,9 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.fishies.R
 import com.example.fishies.model.FishData
 import com.example.fishies.repository.FishRepository
-import com.example.fishies.viewModel.AlbumListAdapter
-import com.example.fishies.viewModel.FishDataViewModelFactory
-import com.example.fishies.viewModel.FishDataViewModel
+import com.example.fishies.repository.UserRepository
+import com.example.fishies.viewModel.*
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -42,6 +41,8 @@ class AlbumFragment : Fragment() {
     private lateinit var myLayoutManager: LinearLayoutManager
 
     private lateinit var fishDataVM: FishDataViewModel
+    private lateinit var stateViewModel: StateViewModel
+    var unlockedFishNumber = 0
 
     var list = MutableLiveData<List<String>>()
 
@@ -58,19 +59,29 @@ class AlbumFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
+        val userRepository = UserRepository()
+        val stateViewModelFactory = StateViewModelFactory(userRepository)
+        stateViewModel = ViewModelProvider(requireActivity(), stateViewModelFactory).get(StateViewModel::class.java)
 
         val repository = FishRepository()
         val viewModelFactory = FishDataViewModelFactory(repository)
         fishDataVM = ViewModelProvider(requireActivity(), viewModelFactory).get(FishDataViewModel::class.java)
 
+        stateViewModel.User.observe(viewLifecycleOwner, Observer{ user->
+            unlockedFishNumber = user.lastUnlockedFish
+        })
+
         myLayoutManager = GridLayoutManager(context, 2)
         setAdapter(mutableListOf())
 
-        myadapter = AlbumListAdapter(fishDataVM.fishList.value)
+        myadapter = AlbumListAdapter(fishDataVM.fishList.value, requireActivity(), unlockedFishNumber)
 
         fishDataVM.fishList.observe(viewLifecycleOwner, Observer{list->
+            for(index in 0..unlockedFishNumber){
+                list[index].unlocked = true
+            }
             myadapter.notifyDataSetChanged()
-            recyclerView.adapter = AlbumListAdapter(list)
+            recyclerView.adapter = AlbumListAdapter(list, requireActivity(), unlockedFishNumber)
         })
 
 
@@ -78,7 +89,7 @@ class AlbumFragment : Fragment() {
     }
 
     fun setAdapter(fishList: MutableList<FishData>){
-        myadapter = AlbumListAdapter(fishList)
+        myadapter = AlbumListAdapter(fishList, requireActivity(), unlockedFishNumber)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

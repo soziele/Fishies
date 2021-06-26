@@ -22,7 +22,8 @@ class UserRepository {
         userParams.put("equippedFishingRod", user.equippedFishingRod)
         userParams.put("unlockedBaits", user.equippedBaits)
         userParams.put("location", user.location)
-        userParams.put("unlockedAnglers", user.unlockedAnglers)
+        userParams.put("lastUnlockedAngler", user.lastUnlockedAngler)
+        userParams.put("lastUnlockedFish", user.lastUnlockedFish)
         userParams.put("lastLoggedIn", user.lastLoggedIn)
 
         val userParamsString = userParams.toString()

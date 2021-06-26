@@ -1,8 +1,10 @@
 package com.example.fishies.view
 
 import android.annotation.SuppressLint
+import android.content.res.Resources
+import android.content.res.loader.ResourcesLoader
+import android.content.res.loader.ResourcesProvider
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -42,6 +44,7 @@ class Game : Fragment() {
     private var param2: String? = null
     private lateinit var stateViewModel: StateViewModel
     private lateinit var fishDataVM: FishDataViewModel
+    private var unlockedBaitNumber = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +64,10 @@ class Game : Fragment() {
         val repository = FishRepository()
         val viewModelFactory = FishDataViewModelFactory(repository)
         fishDataVM = ViewModelProvider(requireActivity(), viewModelFactory).get(FishDataViewModel::class.java)
+
+        for(bait in UpgradesList.baits){
+            if(bait.bought) unlockedBaitNumber++
+        }
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_game, container, false)
@@ -82,6 +89,7 @@ class Game : Fragment() {
 
         stateViewModel.fishesNumber.observe(viewLifecycleOwner, Observer { number->
             stateViewModel.User.observe(viewLifecycleOwner, Observer {user->
+                fishDataVM.fishList.observe(viewLifecycleOwner, Observer{fishList->
 
                 gameScreen.setImageResource(LocationsList.locations.last {location -> location.bought }.background)
 
@@ -93,10 +101,17 @@ class Game : Fragment() {
                             Toast.makeText(context, "Your tackle box won't contain that many fish!", Toast.LENGTH_SHORT).show()
                         } else {
                             stateViewModel.click()
+                            var randomFish = (0..unlockedBaitNumber).random()
+
+                            if(!fishList[randomFish].unlocked!! && randomFish > user.lastUnlockedFish){
+                                Toast.makeText(context, "New fish caught!", Toast.LENGTH_SHORT).show()
+                                fishList[randomFish].unlocked = true
+                                user.lastUnlockedFish = randomFish
+                            }
 
                             var newFish: ImageView
                             newFish = ImageView(context)
-                            newFish.setImageResource(R.drawable.fish)
+                            newFish.setImageResource(resources.getIdentifier("fish${randomFish+1}", "drawable", requireActivity().packageName))
                             gameFrame.addView(newFish)
                             newFish.x = event.x
                             newFish.y = event.y
@@ -111,6 +126,7 @@ class Game : Fragment() {
                 return v?.onTouchEvent(event) ?: true
             }
                 })
+            })
             })
         })
     }

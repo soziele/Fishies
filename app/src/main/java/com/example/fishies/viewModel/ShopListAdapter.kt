@@ -53,7 +53,7 @@ class ShopListAdapter (var items: LiveData<List<Upgrade>>, val stateViewModel: S
             }
             "Angler"-> {
                 itemIcon.setImageResource(R.drawable.fisherman)
-                itemDescription.text = "Works for you for "+items.value!![position].value+" minutes"
+                itemDescription.text = "Works for you when you're away with the rate of "+items.value!![position].value+" fish per second"
             }
         }
 
@@ -79,6 +79,8 @@ class ShopListAdapter (var items: LiveData<List<Upgrade>>, val stateViewModel: S
                 Toast.makeText(context, "You don't have enough money!", Toast.LENGTH_SHORT).show()
             }else if(items.value!![position]. type == "Bait" && ((items.value!![position].value)/5) >= (LocationsList.locations.indexOf(LocationsList.locations.last { location -> location.bought })+1)) {
                 Toast.makeText(context, "This type of fish doesn't exist in this location!", Toast.LENGTH_SHORT).show()
+            }else if(items.value!![position]. type == "Bait" && position!=0 && !items.value!![position-1].bought) {
+                Toast.makeText(context, "You need to catch ${items.value!![position-1].name.substring(0,items.value!![position-1].name.length-5)} first!", Toast.LENGTH_SHORT).show()
             }else {
                 stateViewModel.buyItem(items.value!![position])
             }
