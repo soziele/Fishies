@@ -49,14 +49,14 @@ class UpgradesList {
             Upgrade("Bait","Lake Sturgeon Bait", "",24,0,2000,false)
         )
         val anglers = listOf(
-            Upgrade("Angler","John", "",5,-1,5000,false),
-            Upgrade("Angler","Henry", "",15,-1,25000,false),
-            Upgrade("Angler","Andrew", "",30,-1,50000,false),
-            Upgrade("Angler","Maria", "",60,-1,100000,false),
-            Upgrade("Angler","Peter", "",90,-1,200000,false),
-            Upgrade("Angler","Gill", "",120,-1,300000,false),
-            Upgrade("Angler","Tom", "",180,-1,400000,false),
-            Upgrade("Angler","Jack", "",300,-1,500000,false),
+            Upgrade("Angler","John", "",1,-1,50,false),
+            Upgrade("Angler","Henry", "",2,-1,250,false),
+            Upgrade("Angler","Andrew", "",3,-1,500,false),
+            Upgrade("Angler","Maria", "",5,-1,100000,false),
+            Upgrade("Angler","Peter", "",8,-1,200000,false),
+            Upgrade("Angler","Gill", "",12,-1,300000,false),
+            Upgrade("Angler","Tom", "",20,-1,400000,false),
+            Upgrade("Angler","Jack", "",30,-1,500000,false),
         )
     }
 }

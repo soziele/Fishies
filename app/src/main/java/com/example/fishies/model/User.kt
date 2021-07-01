@@ -13,6 +13,8 @@ data class User(val id: Int = -1,
                 var equippedFishingRod: Int = -1,
                 var equippedBaits: List<Int> = emptyList<Int>(),
                 var location: Int = 0,
-                var unlockedAnglers: List<Int> = emptyList<Int>(),
-                var lastLoggedIn: Long = 1623795066013) {
+                var lastUnlockedAngler: Int? = null,
+                var lastLoggedIn: Long = 1623795066013,
+                var lastUnlockedFish: Int = 0
+                ){
 }

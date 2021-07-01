@@ -1,7 +1,8 @@
 package com.example.fishies.viewModel
 
+import android.app.Activity
+import android.content.res.Resources
 import android.graphics.Color
-import android.transition.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.VISIBLE
@@ -12,8 +13,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fishies.R
 import com.example.fishies.model.FishData
+import java.security.acl.Owner
 
-class AlbumListAdapter(var items: MutableList<FishData>?): RecyclerView.Adapter<AlbumListAdapter.ItemsHolder>(){
+class AlbumListAdapter(var items: MutableList<FishData>?, var activity: Activity, var unlockedFishNumber: Int): RecyclerView.Adapter<AlbumListAdapter.ItemsHolder>(){
 
     inner class ItemsHolder(view: View): RecyclerView.ViewHolder(view)
 
@@ -24,6 +26,7 @@ class AlbumListAdapter(var items: MutableList<FishData>?): RecyclerView.Adapter<
     }
 
     override fun onBindViewHolder(holder: ItemsHolder, position: Int) {
+
 
         var fishName = holder.itemView.findViewById<TextView>(R.id.card_fish_name)
         var fishLatinoName = holder.itemView.findViewById<TextView>(R.id.card_fish_latino_name)
@@ -40,9 +43,9 @@ class AlbumListAdapter(var items: MutableList<FishData>?): RecyclerView.Adapter<
 
         fishName.text = items!![position].name
         fishLatinoName.text = items!![position].scientific
-        fishParameters.text = "Average length: "+items!![position].avLength.toString()
-        fishDescription.text = items!![position].biology
-        fishPhoto.setImageResource(R.drawable.fish)
+        fishParameters.text = "Average length:  ${items!![position].avLength.toString()} cm\nMaximum weight: ${items!![position].maxWeight} kg"
+        fishDescription.text = "${items!![position].biology!!.substringBefore('.')}. ${items!![position].biology!!.substringAfterLast('.')}"
+        fishPhoto.setImageResource(activity.resources.getIdentifier("fish${position+1}", "drawable", activity.packageName))
         holder.itemView.setBackgroundColor(Color.parseColor("#E3F1F6"))
 
         if(!items!![position].unlocked!!){

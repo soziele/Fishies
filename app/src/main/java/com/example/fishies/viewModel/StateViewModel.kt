@@ -2,14 +2,12 @@ package com.example.fishies.viewModel
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.*
-import com.example.fishies.model.LocationsList
-import com.example.fishies.model.Upgrade
-import com.example.fishies.model.UpgradesList
-import com.example.fishies.model.User
+import com.example.fishies.model.*
 import com.example.fishies.repository.UserRepository
 import kotlinx.coroutines.launch
 import okhttp3.internal.notify
@@ -21,6 +19,7 @@ class StateViewModel(val repository: UserRepository): ViewModel() {
     lateinit var User: MutableLiveData<User>
     var fishesNumber: MutableLiveData<Int> = MutableLiveData(0)
     var fishPrice: MutableLiveData<Int> = MutableLiveData(1)
+    var currentAngler: MutableLiveData<Upgrade?> = MutableLiveData(null)
 
     init {
        getUserState()
@@ -48,7 +47,8 @@ class StateViewModel(val repository: UserRepository): ViewModel() {
                     tackleBox = response.body()!!.tackleBox,
                     equippedFishingRod = response.body()!!.equippedFishingRod,
                     location = response.body()!!.location,
-                    unlockedAnglers = response.body()!!.unlockedAnglers,
+                    lastUnlockedAngler = response.body()!!.lastUnlockedAngler,
+                    lastUnlockedFish = response.body()!!.lastUnlockedFish,
                     lastLoggedIn = response.body()!!.lastLoggedIn)
                 updateUpgradesList()
                 fishesNumber.value = User.value!!.fishes
@@ -59,9 +59,11 @@ class StateViewModel(val repository: UserRepository): ViewModel() {
     }
 
     fun click(){
-        User.value!!.fishes = User.value!!.fishes.plus(1)//todo: add other upgrades
-        Log.d("Clicked", User.value!!.fishes.toString())
-        fishesNumber.value = User.value!!.fishes
+        if(User.value!!.fishes <= UpgradesList.tackleBoxes[User.value!!.tackleBox].value) {
+            User.value!!.fishes = User.value!!.fishes.plus(1)//todo: add other upgrades
+            Log.d("Clicked", User.value!!.fishes.toString())
+            fishesNumber.value = User.value!!.fishes
+        }
     }
 
     fun sellFishes() {
@@ -81,9 +83,12 @@ class StateViewModel(val repository: UserRepository): ViewModel() {
         for (index in UpgradesList.rods.indices){
             if(index <= User.value!!.equippedFishingRod) UpgradesList.rods[index].bought = true
         }
-        for (angler in UpgradesList.anglers.indices){
-            if(User.value!!.unlockedAnglers.contains(angler)) UpgradesList.anglers[angler].bought = true
-        }
+        for (index in UpgradesList.anglers.indices){
+            if(User.value!!.lastUnlockedAngler != null) {
+                if (index <= User.value!!.lastUnlockedAngler!!) UpgradesList.anglers[index].bought =
+                    true
+            }
+            }
     }
 
     fun buyItem(upgrade: Upgrade) {
@@ -107,10 +112,11 @@ class StateViewModel(val repository: UserRepository): ViewModel() {
                     UpgradesList.baits.first { it.name == upgrade.name }.bought = true
                     Log.d("Bought item", upgrade.name+" "+UpgradesList.baits.first { it.name == upgrade.name }.bought.toString())
                     User.value!!.money = User.value!!.money.minus(upgrade.price)
+                    //User.value!!.lastUnlockedFish = UpgradesList.baits.indexOf(upgrade) //todo: unlocking fish on fishing, not on buying bait
                     User.value = User.value
                 }
                 "Angler"->{
-
+                    employAngler(upgrade)
                 }
             }
         updateUpgradesList()
@@ -120,5 +126,9 @@ class StateViewModel(val repository: UserRepository): ViewModel() {
         User.value!!.location = locationIndex
         LocationsList.locations[locationIndex].bought = true
         User.value = User.value
+    }
+
+    fun employAngler(angler: Upgrade) {
+
     }
 }

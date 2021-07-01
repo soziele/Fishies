@@ -29,9 +29,9 @@
                     android:scaleType="fitCenter"
                     android:scaleX="0.8"
                     android:scaleY="1"
-                    android:src="@drawable/fish"
-                    app:srcCompat="@drawable/fish"
-                    tools:srcCompat="@drawable/fish" />
+                    android:src="@drawable/fish1"
+                    app:srcCompat="@drawable/fish1"
+                    tools:srcCompat="@drawable/fish1" />
 
                 <TextView
                     android:id="@+id/fishes_header"
