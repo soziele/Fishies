@@ -8,7 +8,7 @@ class LocationsList {
                 Location("Pond", 0, true, R.drawable.pond),
                 Location("Springs", 50, false, R.drawable.springs),
                 Location("Isle", 250,false, R.drawable.isle),
-                Location("Waterfall", 1000000, false, R.drawable.waterfall),
-                Location("Bay", 50000000, false, R.drawable.bay))
+                Location("Waterfall", 1000, false, R.drawable.waterfall),
+                Location("Bay", 5000000, false, R.drawable.bay))
     }
 }

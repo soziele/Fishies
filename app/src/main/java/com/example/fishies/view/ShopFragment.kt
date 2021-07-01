@@ -86,12 +86,14 @@ class shop : Fragment() {
         val rodsButton = view.findViewById<ImageButton>(R.id.rods_button)
         val baitsButton = view.findViewById<ImageButton>(R.id.baits_button)
         val anglersButton = view.findViewById<ImageButton>(R.id.anglers_button)
+        val resetButton = view.findViewById<ImageButton>(R.id.reset_button)
 
         exitShopButton.setOnClickListener { view.findNavController().navigate(R.id.action_shop_to_game) }
         tackleBoxesButton.setOnClickListener { list.value = UpgradesList.tackleBoxes}
         rodsButton.setOnClickListener { list.value = UpgradesList.rods }
         baitsButton.setOnClickListener { list.value = UpgradesList.baits }
         anglersButton.setOnClickListener { list.value = UpgradesList.anglers }
+        resetButton.setOnClickListener { list.value = listOf(Upgrade("Reset", "Reset Button", "Lets you reset your progress and start over again",-1,-1,100,false)) }
     }
 
     companion object {

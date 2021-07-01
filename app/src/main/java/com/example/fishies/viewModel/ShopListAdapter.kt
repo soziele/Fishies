@@ -53,7 +53,11 @@ class ShopListAdapter (var items: LiveData<List<Upgrade>>, val stateViewModel: S
             }
             "Angler"-> {
                 itemIcon.setImageResource(R.drawable.fisherman)
-                itemDescription.text = "Works for you when you're away with the rate of "+items.value!![position].value+" fish per second"
+                itemDescription.text = "Works when you're away with the rate of "+items.value!![position].value+" fish per second"
+            }
+            "Reset"-> {
+                itemIcon.setImageResource(R.drawable.alarm_button)
+                itemDescription.text = items.value!![position].description
             }
         }
 
@@ -72,6 +76,7 @@ class ShopListAdapter (var items: LiveData<List<Upgrade>>, val stateViewModel: S
             buyButton.setBackgroundColor(Color.rgb(75, 5, 135))
             holder.itemView.setBackgroundColor(Color.WHITE)
         }
+
         buyButton.setOnClickListener {
             Log.d("Buying", "${items.value!![position].value+1/5}")
             Log.d("Buying", "${LocationsList.locations.indexOf(LocationsList.locations.last { location -> location.bought })+1}")

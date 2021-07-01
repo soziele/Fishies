@@ -20,6 +20,7 @@ import com.example.fishies.viewModel.FishDataViewModelFactory
 import com.example.fishies.viewModel.StateViewModel
 import com.example.fishies.viewModel.StateViewModelFactory
 import okhttp3.internal.notifyAll
+import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -69,7 +70,12 @@ class HeaderFragment : Fragment() {
 
         stateViewModel.User.observe(viewLifecycleOwner, Observer { user ->
             moneyHeader.text = user.money.toString()+"$"
-            levelHeader.text = LocationsList.locations.get(user.location).name
+            levelHeader.text = LocationsList.locations[user.location].name
+            when (levelHeader.text) {
+                "Waterfall" -> levelHeader.textSize = 16f
+                "Springs" -> levelHeader.textSize = 20f
+                else -> levelHeader.textSize = 24f
+            }
 
             val sellButton = view.findViewById<Button>(R.id.sell_button)
             stateViewModel.fishPrice.observe(viewLifecycleOwner, Observer { value->
@@ -80,13 +86,13 @@ class HeaderFragment : Fragment() {
 
             sellButton.setOnClickListener {
                 stateViewModel.sellFishes()
-                fishHeader.text = user.fishes.toString()+"/"+UpgradesList.tackleBoxes.get(user.tackleBox).value
+                fishHeader.text = user.fishes.toInt().toString()+"/"+UpgradesList.tackleBoxes.get(user.tackleBox).value
                 moneyHeader.text = user.money.toString()+"$"
             }
 
         stateViewModel.fishesNumber.observe(viewLifecycleOwner, Observer { number->
             fishHeader.text = number.toString()+"/"+UpgradesList.tackleBoxes.get(user.tackleBox).value
-        })
+            })
         })
 
     }

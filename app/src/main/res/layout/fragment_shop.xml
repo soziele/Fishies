@@ -68,6 +68,15 @@
             android:scaleType="fitCenter"
             android:scaleY="1"
             android:src="@drawable/fisherman" />
+
+        <ImageButton
+            android:id="@+id/reset_button"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:scaleType="fitCenter"
+            android:scaleY="1"
+            android:src="@drawable/alarm_button" />
+
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

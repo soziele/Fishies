@@ -1,6 +1,7 @@
 package com.example.fishies.view
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.res.Resources
 import android.content.res.loader.ResourcesLoader
 import android.content.res.loader.ResourcesProvider
@@ -15,6 +16,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -65,9 +67,7 @@ class Game : Fragment() {
         val viewModelFactory = FishDataViewModelFactory(repository)
         fishDataVM = ViewModelProvider(requireActivity(), viewModelFactory).get(FishDataViewModel::class.java)
 
-        for(bait in UpgradesList.baits){
-            if(bait.bought) unlockedBaitNumber++
-        }
+
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_game, container, false)
@@ -76,6 +76,7 @@ class Game : Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         val shopButton = view.findViewById<Button>(R.id.shop_button)
         val questsButton = view.findViewById<Button>(R.id.quests_button)
@@ -91,6 +92,8 @@ class Game : Fragment() {
             stateViewModel.User.observe(viewLifecycleOwner, Observer {user->
                 fishDataVM.fishList.observe(viewLifecycleOwner, Observer{fishList->
 
+                    unlockedBaitNumber = user.lastUnlockedBait
+
                 gameScreen.setImageResource(LocationsList.locations.last {location -> location.bought }.background)
 
         gameScreen.setOnTouchListener(object : View.OnTouchListener {
@@ -103,8 +106,19 @@ class Game : Fragment() {
                             stateViewModel.click()
                             var randomFish = (0..unlockedBaitNumber).random()
 
-                            if(!fishList[randomFish].unlocked!! && randomFish > user.lastUnlockedFish){
-                                Toast.makeText(context, "New fish caught!", Toast.LENGTH_SHORT).show()
+                            if(!fishList[randomFish].unlocked!! && randomFish > user.lastUnlockedFish) {
+
+                                val dialogBuilder = AlertDialog.Builder(requireActivity())
+                                        .setCancelable(false)
+                                        .setPositiveButton("Ok", DialogInterface.OnClickListener { dialog, id ->
+                                            dialog.dismiss()
+
+                                        })
+                                val alert = dialogBuilder.create()
+                                alert.setTitle("You've just caught a new fish!")
+                                alert.setMessage("It's ${fishList[randomFish].name}!\nGo to your collection to find out more about it.")
+                                alert.setIcon(activity!!.resources.getIdentifier("fish${randomFish+1}", "drawable", activity!!.packageName))
+                                alert.show()
                                 fishList[randomFish].unlocked = true
                                 user.lastUnlockedFish = randomFish
                             }
@@ -119,7 +133,7 @@ class Game : Fragment() {
                             newFish.layoutParams.width = 100
                             newFish.startAnimation(AnimationUtils.loadAnimation(context, R.anim.pop_out))
                             newFish.visibility = View.INVISIBLE
-                        }
+                            }
                     }
                 }
 
@@ -129,6 +143,11 @@ class Game : Fragment() {
             })
             })
         })
+    }
+
+    override fun onPause() {
+        stateViewModel.updateUserState()
+        super.onPause()
     }
 
     companion object {

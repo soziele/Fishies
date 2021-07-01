@@ -78,10 +78,10 @@
             android:background="#FFC400"
             android:backgroundTint="#00E676"
             android:backgroundTintMode="add"
-            android:paddingTop="20dp"
-            android:text="1 lvl"
+            android:gravity="center"
+            android:text="location"
             android:textAlignment="center"
-            android:textSize="24sp" />
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/sell_button"
