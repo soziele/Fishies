@@ -77,6 +77,7 @@ class MapFragment : Fragment() {
             setBuyOnClick(pin, pricesList[pinsList.indexOf(pin)], pinsList.indexOf(pin))
             if(LocationsList.locations[pinsList.indexOf(pin)].bought){
                 pin.setImageResource(R.drawable.visited)
+                pin.isEnabled = false
             }else{
                 pin.setImageResource(R.drawable.unvisited)
             }

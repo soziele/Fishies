@@ -1,17 +1,13 @@
 package com.example.fishies.viewModel
 
-import android.app.Application
-import android.content.Context
-import android.content.Intent
-import android.os.Build
+import android.annotation.SuppressLint
+import android.hardware.usb.UsbDevice.getDeviceId
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.*
 import com.example.fishies.model.*
 import com.example.fishies.repository.UserRepository
 import kotlinx.coroutines.launch
-import okhttp3.internal.notify
-import okhttp3.internal.notifyAll
 
 
 class StateViewModel(val repository: UserRepository): ViewModel() {
@@ -20,21 +16,25 @@ class StateViewModel(val repository: UserRepository): ViewModel() {
     var fishesNumber: MutableLiveData<Int> = MutableLiveData(0)
     var fishPrice: MutableLiveData<Int> = MutableLiveData(1)
     var currentAngler: MutableLiveData<Upgrade?> = MutableLiveData(null)
+    var welcomeDialogTime: Boolean = true
 
     init {
        getUserState()
     }
 
-    fun setUserState(){
+    fun updateUserState(){
         viewModelScope.launch {
             repository.updateUserState(User.value!!)
         }
+        Log.d("Server", "User repository called")
     }
 
+    @SuppressLint("HardwareIds")
     fun getUserState() {
         User = MutableLiveData(User())
         viewModelScope.launch {
-            val response = repository.getUserState(123.toString())
+            val response = repository.getUserState(id = "1234")
+            Log.d("Device id",getDeviceId("").toString())
             if (response.isSuccessful) {
                 Log.d(
                     "Response",
@@ -46,12 +46,15 @@ class StateViewModel(val repository: UserRepository): ViewModel() {
                     money = response.body()!!.money,
                     tackleBox = response.body()!!.tackleBox,
                     equippedFishingRod = response.body()!!.equippedFishingRod,
+                    lastUnlockedBait = response.body()!!.lastUnlockedBait,
                     location = response.body()!!.location,
                     lastUnlockedAngler = response.body()!!.lastUnlockedAngler,
                     lastUnlockedFish = response.body()!!.lastUnlockedFish,
                     lastLoggedIn = response.body()!!.lastLoggedIn)
                 updateUpgradesList()
-                fishesNumber.value = User.value!!.fishes
+                updateLocationsList()
+                fishesNumber.value = User.value!!.fishes.toInt()
+                fishPrice.value = UpgradesList.rods[User.value!!.equippedFishingRod].value
             } else {
                 Log.e("Response", response.code().toString() )
             }
@@ -62,15 +65,22 @@ class StateViewModel(val repository: UserRepository): ViewModel() {
         if(User.value!!.fishes <= UpgradesList.tackleBoxes[User.value!!.tackleBox].value) {
             User.value!!.fishes = User.value!!.fishes.plus(1)//todo: add other upgrades
             Log.d("Clicked", User.value!!.fishes.toString())
-            fishesNumber.value = User.value!!.fishes
+            fishesNumber.value = User.value!!.fishes.toInt()
         }
     }
 
     fun sellFishes() {
-        User.value!!.money = User.value!!.money.plus(User.value!!.fishes*fishPrice.value!!) //todo: add other upgrades
-        User.value!!.fishes = 0
-        fishesNumber.value = User.value!!.fishes
+        User.value!!.money = User.value!!.money.plus(User.value!!.fishes.toInt()*fishPrice.value!!) //todo: add other upgrades
+        User.value!!.fishes = 0f
+        fishesNumber.value = User.value!!.fishes.toInt()
         Log.d("Sold", User.value!!.fishes.toString())
+        updateUserState()
+    }
+
+    fun updateLocationsList() {
+        for (index in 0..User.value!!.location) {
+            LocationsList.locations[index].bought = true
+        }
     }
 
     fun updateUpgradesList() {
@@ -78,7 +88,7 @@ class StateViewModel(val repository: UserRepository): ViewModel() {
             if(index <= User.value!!.tackleBox) UpgradesList.tackleBoxes[index].bought = true
         }
         for (bait in UpgradesList.baits.indices){
-            if(User.value!!.equippedBaits.contains(bait)) UpgradesList.baits.get(bait).bought = true
+            if(bait <= User.value!!.lastUnlockedBait) UpgradesList.baits[bait].bought = true
         }
         for (index in UpgradesList.rods.indices){
             if(index <= User.value!!.equippedFishingRod) UpgradesList.rods[index].bought = true
@@ -88,7 +98,7 @@ class StateViewModel(val repository: UserRepository): ViewModel() {
                 if (index <= User.value!!.lastUnlockedAngler!!) UpgradesList.anglers[index].bought =
                     true
             }
-            }
+        }
     }
 
     fun buyItem(upgrade: Upgrade) {
@@ -108,7 +118,7 @@ class StateViewModel(val repository: UserRepository): ViewModel() {
                     User.value = User.value
                 }
                 "Bait"->{
-                    User.value!!.equippedBaits.toMutableList().add(UpgradesList.baits.indexOf(upgrade))
+                    if(User.value!!.lastUnlockedBait < UpgradesList.baits.indexOf(upgrade)) User.value!!.lastUnlockedBait = UpgradesList.baits.indexOf(upgrade)
                     UpgradesList.baits.first { it.name == upgrade.name }.bought = true
                     Log.d("Bought item", upgrade.name+" "+UpgradesList.baits.first { it.name == upgrade.name }.bought.toString())
                     User.value!!.money = User.value!!.money.minus(upgrade.price)
@@ -116,19 +126,30 @@ class StateViewModel(val repository: UserRepository): ViewModel() {
                     User.value = User.value
                 }
                 "Angler"->{
-                    employAngler(upgrade)
+                    if(User.value!!.lastUnlockedAngler != null) {
+                        if (User.value!!.lastUnlockedAngler!! < UpgradesList.anglers.indexOf(upgrade)) User.value!!.lastUnlockedAngler = UpgradesList.anglers.indexOf(upgrade)
+                    }else User.value!!.lastUnlockedAngler = UpgradesList.anglers.indexOf(upgrade)
+                    UpgradesList.anglers.first { it.name == upgrade.name }.bought = true
+                    User.value!!.money = User.value!!.money.minus(upgrade.price)
+                    User.value = User.value
+                }
+                "Reset"->{
+                    viewModelScope.launch {
+                        Log.d("User id",User.value!!.id)
+                        repository.deleteUserState(User.value!!.id)
+                    }
+                    getUserState()
                 }
             }
         updateUpgradesList()
+        if(upgrade.type != "Reset") updateUserState()
     }
 
     fun buyLocation(locationIndex: Int) {
         User.value!!.location = locationIndex
+        User.value!!.money = User.value!!.money.minus(LocationsList.locations[locationIndex].price)
         LocationsList.locations[locationIndex].bought = true
         User.value = User.value
-    }
-
-    fun employAngler(angler: Upgrade) {
-
+        updateUserState()
     }
 }

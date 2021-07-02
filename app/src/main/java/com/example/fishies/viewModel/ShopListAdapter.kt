@@ -1,5 +1,6 @@
 package com.example.fishies.viewModel
 
+import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.graphics.Color
@@ -18,7 +19,7 @@ import com.example.fishies.R
 import com.example.fishies.model.LocationsList
 import com.example.fishies.model.Upgrade
 
-class ShopListAdapter (var items: LiveData<List<Upgrade>>, val stateViewModel: StateViewModel, val context: Context): RecyclerView.Adapter<ShopListAdapter.ItemsHolder>(){
+class ShopListAdapter (var items: LiveData<List<Upgrade>>, val stateViewModel: StateViewModel, val context: Context, val activity: Activity): RecyclerView.Adapter<ShopListAdapter.ItemsHolder>(){
 
     inner class ItemsHolder(view: View):RecyclerView.ViewHolder(view)
 
@@ -52,8 +53,10 @@ class ShopListAdapter (var items: LiveData<List<Upgrade>>, val stateViewModel: S
                 itemDescription.text = "Lets you catch specific type of fish"
             }
             "Angler"-> {
+                stateViewModel.welcomeDialogTime = false
                 itemIcon.setImageResource(R.drawable.fisherman)
                 itemDescription.text = "Works when you're away with the rate of "+items.value!![position].value+" fish per second"
+                stateViewModel.welcomeDialogTime = false
             }
             "Reset"-> {
                 itemIcon.setImageResource(R.drawable.alarm_button)
@@ -88,8 +91,13 @@ class ShopListAdapter (var items: LiveData<List<Upgrade>>, val stateViewModel: S
                 Toast.makeText(context, "You need to catch ${items.value!![position-1].name.substring(0,items.value!![position-1].name.length-5)} first!", Toast.LENGTH_SHORT).show()
             }else {
                 stateViewModel.buyItem(items.value!![position])
+                if(items.value!![position].type == "Reset") {
+                    activity.finish()
+                    activity.startActivity(activity.intent)
+                }
             }
             }
+
         }
 
     override fun getItemCount(): Int {

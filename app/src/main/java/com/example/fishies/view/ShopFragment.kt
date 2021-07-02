@@ -60,7 +60,7 @@ class shop : Fragment() {
         stateViewModel = ViewModelProvider(requireActivity(), stateViewModelFactory).get(StateViewModel::class.java)
 
         list.value = UpgradesList.tackleBoxes
-        myadapter = ShopListAdapter(list, stateViewModel, requireContext())
+        myadapter = ShopListAdapter(list, stateViewModel, requireContext(), requireActivity())
         myLayoutManager = LinearLayoutManager(context)
 
         list.observe(viewLifecycleOwner, Observer{
